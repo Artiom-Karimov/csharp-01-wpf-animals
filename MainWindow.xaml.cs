@@ -16,6 +16,9 @@ namespace csharp_01
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TextBlock lastTextBlockClicked;
+        private bool findingMatch = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -45,6 +48,26 @@ namespace csharp_01
                 block.Text = nextEmoji;
                 animalEmoji.RemoveAt(index);
             }
+        }
+
+        private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var textBlock = sender as TextBlock;
+            if (!findingMatch)
+            {
+                textBlock.Visibility = Visibility.Hidden;
+                lastTextBlockClicked = textBlock;
+                findingMatch = true;
+                return;
+            }
+            if (textBlock.Text == lastTextBlockClicked.Text)
+            {
+                textBlock.Visibility = Visibility.Hidden;
+                findingMatch = false;
+                return;
+            }
+            lastTextBlockClicked.Visibility = Visibility.Visible;
+            findingMatch = false;
         }
     }
 }
