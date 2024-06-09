@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,11 +28,13 @@ namespace csharp_01
         private TextBlock lastTextBlockClicked;
         private bool findingMatch = false;
 
+        private Random random = new Random();
+
         public MainWindow()
         {
             InitializeComponent();
-            StartTimer();
             SetUpGame();
+            StartTimer();
         }
 
         private void StartTimer() 
@@ -64,16 +67,20 @@ namespace csharp_01
                 "🐭","🐭",
             };
 
-            var random = new Random();
-
             foreach (var block in mainGrid.Children.OfType<TextBlock>())
             {
-                if (!block.Text.Equals("?")) continue;
-                int index = random.Next(animalEmoji.Count);
-                string nextEmoji = animalEmoji[index];
-                block.Text = nextEmoji;
-                animalEmoji.RemoveAt(index);
+                InitailizeBlock(block, animalEmoji);
             }
+        }
+
+        private void InitailizeBlock(TextBlock block, List<string> animalEmoji)
+        {
+            if (!(block.Text.Equals("?") || block.Visibility == Visibility.Hidden)) return;
+            int index = random.Next(animalEmoji.Count);
+            string nextEmoji = animalEmoji[index];
+            block.Text = nextEmoji;
+            block.Visibility = Visibility.Visible;
+            animalEmoji.RemoveAt(index);
         }
 
         private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
@@ -127,6 +134,7 @@ namespace csharp_01
 
         private void timerTicksDisplay_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            StartTimer();
             SetUpGame();
         }
     }
