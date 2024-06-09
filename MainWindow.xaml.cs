@@ -1,15 +1,7 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Text;
+﻿using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace csharp_01
@@ -19,9 +11,6 @@ namespace csharp_01
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DispatcherTimer timer = new DispatcherTimer();
-        private int tenthsOfSecondsElapsed = 0;
-
         private int pairsFound = 0;
         private readonly int pairsTotal = 8;
 
@@ -30,31 +19,21 @@ namespace csharp_01
 
         private Random random = new Random();
 
+        private readonly GameTimer timer = new GameTimer();
+
         public MainWindow()
         {
             InitializeComponent();
             SetUpGame();
-            
-            InitailizeTimer();
-            RestartTimer();
-        }
 
-        private void InitailizeTimer() 
-        {
             timer.Tick += Timer_Tick;
-            timer.Interval = TimeSpan.FromSeconds(.1);
-        }
-
-        private void RestartTimer()
-        {
-            tenthsOfSecondsElapsed = 0;
             timer.Start();
         }
 
-        private void Timer_Tick(object? sender, EventArgs e)
+        private void Timer_Tick(object? sender, GameTimerEventArgs e)
         {
-            tenthsOfSecondsElapsed += 1;
-            timerTicksDisplay.Text = (tenthsOfSecondsElapsed / 10F).ToString("0.0s");
+            var elapsed = e.TenthsOfSecondsElapsed;
+            timerTicksDisplay.Text = (elapsed / 10F).ToString("0.0s");
         }
 
         private void SetUpGame()
@@ -136,12 +115,13 @@ namespace csharp_01
         private void EndGame()
         {
             timer.Stop();
+            timerTicksDisplay.Text += ". Play again?";
         }
 
         private void timerTicksDisplay_MouseDown(object sender, MouseButtonEventArgs e)
         {
             SetUpGame();
-            RestartTimer();
+            timer.Start();
         }
     }
 }
