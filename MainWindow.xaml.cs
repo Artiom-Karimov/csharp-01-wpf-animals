@@ -17,9 +17,9 @@ namespace csharp_01
         private TextBlock lastTextBlockClicked;
         private bool findingMatch = false;
 
-        private Random random = new Random();
-
         private readonly GameTimer timer = new GameTimer();
+
+        private EmojiList emojiList;
 
         public MainWindow()
         {
@@ -38,34 +38,15 @@ namespace csharp_01
 
         private void SetUpGame()
         {
+            emojiList = new EmojiList(pairsTotal);
             pairsFound = 0;
-
-            var animalEmoji = new List<string>()
-            {
-                "🐺","🐺",
-                "🐶","🐶",
-                "🙊","🙊",
-                "🦒","🦒",
-                "🦊","🦊",
-                "🦝","🦝",
-                "🐮","🐮",
-                "🐭","🐭",
-            };
 
             foreach (var block in mainGrid.Children.OfType<TextBlock>())
             {
-                InitailizeBlock(block, animalEmoji);
+                if (block.Name.Equals("timerTicksDisplay")) continue;
+                block.Text = emojiList.NextOne;
+                block.Visibility = Visibility.Visible;
             }
-        }
-
-        private void InitailizeBlock(TextBlock block, List<string> animalEmoji)
-        {
-            if (!(block.Text.Equals("?") || block.Visibility == Visibility.Hidden)) return;
-            int index = random.Next(animalEmoji.Count);
-            string nextEmoji = animalEmoji[index];
-            block.Text = nextEmoji;
-            block.Visibility = Visibility.Visible;
-            animalEmoji.RemoveAt(index);
         }
 
         private void TextBlock_MouseDown(object sender, MouseButtonEventArgs e)
@@ -106,14 +87,13 @@ namespace csharp_01
         private void IncrementFoundCounter()
         {
             pairsFound++;
-            if (pairsFound == pairsTotal)
-            {
-                EndGame();
-            }
+            EndGameIfNeeded();
         }
 
-        private void EndGame()
+        private void EndGameIfNeeded()
         {
+            if (pairsFound < pairsTotal) return;
+
             timer.Stop();
             timerTicksDisplay.Text += ". Play again?";
         }
