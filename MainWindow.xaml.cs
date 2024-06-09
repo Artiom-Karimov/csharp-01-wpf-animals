@@ -34,14 +34,20 @@ namespace csharp_01
         {
             InitializeComponent();
             SetUpGame();
-            StartTimer();
+            
+            InitailizeTimer();
+            RestartTimer();
         }
 
-        private void StartTimer() 
+        private void InitailizeTimer() 
+        {
+            timer.Tick += Timer_Tick;
+            timer.Interval = TimeSpan.FromSeconds(.1);
+        }
+
+        private void RestartTimer()
         {
             tenthsOfSecondsElapsed = 0;
-            timer.Interval = TimeSpan.FromSeconds(.1);
-            timer.Tick += Timer_Tick;
             timer.Start();
         }
 
@@ -134,8 +140,8 @@ namespace csharp_01
 
         private void timerTicksDisplay_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            StartTimer();
             SetUpGame();
+            RestartTimer();
         }
     }
 }
